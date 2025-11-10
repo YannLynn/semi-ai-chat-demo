@@ -1,0 +1,29 @@
+body {
+  margin: 0;
+  font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
+  padding: 15px;
+
+  ol {
+    margin-block-start: 0;
+    margin-block-end: 0;
+    padding-inline-start: 20;
+  }
+}
+
+.input-outer-style {
+  margin: 12px 0px;
+  min-height: 150px;
+  max-height: 300px;
+  flex-shrink: 0;
+}
+
+.dialogue-outer-style {
+  flex: 1;
+  overflow: auto;
+}
+
+.editing-input-outer-style {
+  margin: 12px 0px;
+  max-height: 300px;
+  flex-shrink: 0;
+}
