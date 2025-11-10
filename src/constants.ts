@@ -30,6 +30,11 @@ export const modelOptions = [
         label: 'GPT-4o',
         type: 'gpt',
     },
+    {
+        value: 'gpt-4.1-2025-04-14',
+        label: 'GPT-4.1',
+        type: 'gpt',
+    },
 ];
 
 

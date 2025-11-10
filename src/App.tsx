@@ -34,7 +34,7 @@ const App = () => {
     const [references, setReferences] = useState<Reference[]>([]); 
 
     const renderLeftMenu = useCallback(() => (<>
-        <Configure.Select optionList={modelOptions} field="model" initValue="gpt-4o" position="top" />
+        <Configure.Select optionList={modelOptions} field="model" initValue="gpt-4.1-2025-04-14" position="top" />
         {/* <Configure.Button icon={<IconFixedStroked />} field="deepThink">深度思考</Configure.Button> */}
         {/* <Configure.Button icon={<IconBookOpenStroked />} field="onlineSearch">联网搜索</Configure.Button> */}
         {/* <Configure.Mcp options={mcpOptions} /> */}
@@ -59,12 +59,12 @@ const App = () => {
         setReferences(newReference);
     }, [references]);
 
-    const handleMessageSend = useCallback(async (input: ContentItem[]) => {
+    const handleMessageSend = useCallback(async (input: ContentItem[], model: string) => {
         try {
             const resp = await fetch('/api/write', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ input: input }),
+                body: JSON.stringify({ input: input, model: model }),
             });
             if (!resp.ok || !resp.body) throw new Error('Network error');
 
@@ -133,7 +133,7 @@ const App = () => {
         (async () => {
           // 将用户消息发送给 server 
           // Send user messages to the server
-          await handleMessageSend(userMessage.content);
+          await handleMessageSend(userMessage.content, userMessage.model);
         })();
         setReferences([]);
     }, []);

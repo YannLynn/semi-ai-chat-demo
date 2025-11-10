@@ -14,7 +14,6 @@ app.use(cors());
 app.use(express.json());
 
 
-
 app.post("/api/write", async (req, res) => {
     res.setHeader("Content-Type", "text/event-stream");
     res.setHeader("Cache-Control", "no-cache, no-transform");
@@ -44,6 +43,7 @@ app.post("/api/write", async (req, res) => {
 
     try {
         const topic = req.body?.input?.[0]?.content?.[0]?.text;
+        const model = req.body?.model;
         if (!topic.trim()) {
             res.write(`data: ${JSON.stringify({ type: "error", error: "Missing topic" })}\n\n`);
             return res.end();
@@ -53,8 +53,10 @@ app.post("/api/write", async (req, res) => {
         // Define two collaborating agents (do not use automatic handoff, manually step-by-step for streaming return)
         const writerAgent = new Agent({
             name: "writer_agent",
+            model,
             instructions: [
                 "You are a content writer.",
+                "CRITICAL: Always respond in the SAME LANGUAGE as the user's input. If the user writes in Chinese, respond in Chinese. If in English, respond in English.",
                 "Based on the outline in the conversation, write an engaging article.",
                 "IMPORTANT: For each numbered point in the outline, write a separate paragraph.",
                 "If there are 3 outline points, write 3 paragraphs. If there are 4, write 4 paragraphs.",
@@ -68,13 +70,14 @@ app.post("/api/write", async (req, res) => {
 
         const outlinerAgent = new Agent({
             name: "outliner_agent",
+            model,
             instructions: [
                 "You are a content outliner.",
-                "Call tool get_background_points(topic) once, then return a single JSON",
-                "Create a brief outline with 3-4 key points in numbered format (1. 2. 3.).",
-                "Keep it concise (50-80 words).",
-                // 不使用自动 handoff，以便在发送大纲后手动触发 writer
-                "After showing the outline, wait for the next step.",
+                "CRITICAL: Always respond in the SAME LANGUAGE as the user's input. If the user writes in Chinese, respond in Chinese. If in English, respond in English.",
+                "IMPORTANT: Call the get_background_points tool EXACTLY ONCE with the topic parameter. Do NOT call it multiple times.",
+                "After receiving the tool result, immediately create a brief outline with 3-4 key points in numbered format (1. 2. 3.).",
+                "Keep the outline concise (50-80 words total).",
+                "Do not call any tools after creating the outline.",
             ].join(" "),
             tools: [getBackgroundPoints]
         });
@@ -135,37 +138,6 @@ app.post("/api/write", async (req, res) => {
         });
     } catch (error) {
         res.write(`data: ${JSON.stringify({ type: "error", error: String(error) })}\n\n`);
-        res.end();
-    }
-});
-
-app.post("/api/chat", async (req, res) => {
-    // 使用 Server-Sent Events (SSE) 进行流式输出
-    res.setHeader("Content-Type", "text/event-stream");
-    res.setHeader("Cache-Control", "no-cache, no-transform");
-    res.setHeader("Connection", "keep-alive");
-    if (typeof res.flushHeaders === "function") res.flushHeaders();
-
-    try {
-        const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-        const stream = await client.responses.stream({
-            model: "gpt-4o",
-            input: req.body?.input ?? "",
-        });
-
-        const onClose = () => {
-        try {
-            res.end();
-        } catch {}
-        };
-        req.on("close", onClose);
-
-        for await (const event of (stream as unknown as AsyncIterable<any>)) {
-            res.write(`data: ${JSON.stringify(event)}\n\n`);
-        }
-        res.end();
-    } catch (error) {
-        res.write(`data: ${JSON.stringify({ error: String(error) })}\n\n`);
         res.end();
     }
 });
