@@ -1,12 +1,14 @@
 
 import React, { useState, useCallback } from 'react';
-import { AIChatDialogue, AIChatInput, chatInputToMessage, streamingResponseToMessage } from '@douyinfe/semi-ui';
+import { AIChatDialogue, AIChatInput, chatInputToChatCompletion, chatInputToMessage, streamingChatCompletionToMessage, streamingResponseToMessage } from '@douyinfe/semi-ui';
 import { IconFixedStroked, IconBookOpenStroked, IconFeishuLogo, IconFigma, IconGit } from '@douyinfe/semi-icons';
 import { roleConfig, uploadProps, modelOptions, radioButtonProps } from './constants';
+// todo: 升级版本，从组件中直接导出
 import { ContentItem, Message } from '@douyinfe/semi-foundation/lib/es/aiChatDialogue/foundation';
 import { MessageContent } from '@douyinfe/semi-foundation/lib/es/aiChatInput/interface';
 import { Content, Reference } from '@douyinfe/semi-ui/lib/es/aiChatInput/interface';
 import './App.css';
+import { ChatCompletionInput } from '@douyinfe/semi-foundation/lib/es/aiChatDialogue/dataAdapter/interface';
 
 const { Configure } = AIChatInput;
 
@@ -27,6 +29,8 @@ const mcpOptions = [
       value: "IconFigma",
   }
 ];
+
+const ChatCompletionType = ['openRouter', 'kimi', 'doubao', 'zhipu'];
 
 const App = () => {
     const [messages, setMessages] = useState<Message[]>([]); 
@@ -59,12 +63,12 @@ const App = () => {
         setReferences(newReference);
     }, [references]);
 
-    const handleMessageSend = useCallback(async (input: ContentItem[], model: string) => {
+    const handleMessageSend = useCallback(async (input: ContentItem[], chatCompletion: ChatCompletionInput, model: string) => {
         try {
             const resp = await fetch('/api/write', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ input: input, model: model }),
+                body: JSON.stringify({ input: input, model: model, messages: chatCompletion }),
             });
             if (!resp.ok || !resp.body) throw new Error('Network error');
 
@@ -96,7 +100,15 @@ const App = () => {
                         messageChunks.push(json);
                     }
                 }
-                const message = streamingResponseToMessage(messageChunks).message;
+
+                let message: any = null;
+                if (ChatCompletionType.includes(messageChunks[0]?.modelType)) {
+                    const parsed = streamingChatCompletionToMessage(messageChunks);
+                    message = parsed?.messages[0] ?? null;
+                } else {
+                    const parsed = streamingResponseToMessage(messageChunks);
+                    message = parsed?.message ?? [];
+                }
 
                 setMessages((prev: Message[]) => {
                     if(prev) {
@@ -125,6 +137,8 @@ const App = () => {
 
     const onMessageSend = useCallback((props: MessageContent) => {
         const userMessage = chatInputToMessage(props);
+        //todo：升级版本后更改写法
+        const chatCompletion = [chatInputToChatCompletion(props)];
         setGenerating(true);
         setMessages((messages) => [...messages, {
             id: `message-${Date.now()}`,
@@ -133,7 +147,7 @@ const App = () => {
         (async () => {
           // 将用户消息发送给 server 
           // Send user messages to the server
-          await handleMessageSend(userMessage.content, userMessage.model);
+          await handleMessageSend(userMessage.content, chatCompletion, userMessage.model,);
         })();
         setReferences([]);
     }, []);

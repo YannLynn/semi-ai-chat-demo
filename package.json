@@ -8,25 +8,30 @@
     "dev": "rsbuild dev --open",
     "preview": "rsbuild preview",
     "server": "tsx watch server/index.tsx",
+    "server:openai": "tsx watch server/chat.tsx --type openai",
+    "server:openRouter": "tsx watch server/chat.tsx --type openRouter",
+    "server:kimi": "tsx watch server/chat.tsx --type kimi",
+    "server:doubao": "tsx watch server/chat.tsx --type doubao",
+    "server:zhipu": "tsx watch server/chat.tsx --type zhipu",
     "dev:full": "concurrently -k -n SERVER,WEB -c green,blue \"npm:server\" \"npm:dev\""
   },
   "dependencies": {
     "@douyinfe/semi-ui": "2.88.0-beta.0",
+    "@openai/agents": "0.2.1",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "openai": "^4.0.0",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "@openai/agents": "0.2.1"
+    "react-dom": "^18.2.0"
   },
   "devDependencies": {
     "@rsbuild/core": "^1.6.0",
     "@rsbuild/plugin-react": "^1.4.1",
     "@types/cors": "^2.8.17",
     "@types/express": "^4.17.21",
-    "@types/react": "^18.2.0",
     "@types/node": "^20.14.10",
+    "@types/react": "^18.2.0",
     "concurrently": "^9.0.1",
     "tsx": "^4.19.0"
   }
