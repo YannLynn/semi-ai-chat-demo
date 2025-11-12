@@ -30,7 +30,7 @@ const mcpOptions = [
   }
 ];
 
-const ChatCompletionType = ['openRouter', 'kimi', 'doubao', 'zhipu'];
+const ChatCompletionType = ['openRouter', 'kimi', 'doubao', 'glm'];
 
 const App = () => {
     const [messages, setMessages] = useState<Message[]>([]); 

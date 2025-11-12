@@ -12,7 +12,7 @@
     "server:openRouter": "tsx watch server/chat.tsx --type openRouter",
     "server:kimi": "tsx watch server/chat.tsx --type kimi",
     "server:doubao": "tsx watch server/chat.tsx --type doubao",
-    "server:zhipu": "tsx watch server/chat.tsx --type zhipu",
+    "server:glm": "tsx watch server/chat.tsx --type glm",
     "dev:full": "concurrently -k -n SERVER,WEB -c green,blue \"npm:server\" \"npm:dev\""
   },
   "dependencies": {

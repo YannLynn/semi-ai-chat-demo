@@ -27,7 +27,7 @@ if (typeIndex !== -1) {
 
 console.log('modelType:', modelType);
 
-// 不同模型（或者厂商）聊天接口请求展示：openai、openRouter、kimi、豆包、zhipu
+// 不同模型（或者厂商）聊天接口请求展示：openai、openRouter、kimi、豆包、glm
 // Display of chat interface requests from different models (or vendors): openai, openRouter, kimi, and doubao
 app.post("/api/write", async (req, res) => {
     res.setHeader("Content-Type", "text/event-stream");
@@ -72,11 +72,11 @@ app.post("/api/write", async (req, res) => {
             apiKey = process.env.ARK_API_KEY || '';
             baseURL ="https://ark.cn-beijing.volces.com/api/v3";
             model = "ep-20250515152021-fjgzd";
-        } else if (modelType === 'zhipu') {
+        } else if (modelType === 'glm') {
             apiKey = process.env.ZHIPU_API_KEY || '';
             baseURL = "https://open.bigmodel.cn/api/paas/v4";   
             model = "glm-4-air-250414"; 
-            messages = [{"role": "user", "content": messages[0]?.content[0]?.text }]; // zhipu content only support string
+            messages = [{"role": "user", "content": messages[0]?.content[0]?.text }]; // glm content only support string
         }
         const client = new OpenAI({ 
             apiKey,

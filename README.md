@@ -34,8 +34,8 @@ OPENAI_API_KEY=xxxxx
 
 ```
 
-### 使用 openRouter、kimi、doubao、zhipu 等发起请求 
-### Use openRouter, kimi, doubao, zhipu, etc. to make requests
+### 使用 openRouter、kimi、doubao、glm 等发起请求 
+### Use openRouter, kimi, doubao, glm, etc. to make requests
 通过以下命令启动特定 server 请求，将聊天消息发送给特定接口
 
 Use the following command to initiate a specific server request to send chat messages to a specific interface.
@@ -46,7 +46,7 @@ yarn server:openai # openai response 接口
 yarn server:openRouter # openRouter chat completion 接口
 yarn server:kimi # kimi chat completion 接口
 yarn server:doubao # doubao chat completion 接口
-yarn server:zhipu # zhipu chat completion 接口
+yarn server:glm # glm chat completion 接口
 ```
 
 #### Start Project
