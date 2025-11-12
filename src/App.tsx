@@ -3,9 +3,8 @@ import React, { useState, useCallback } from 'react';
 import { AIChatDialogue, AIChatInput, chatInputToChatCompletion, chatInputToMessage, streamingChatCompletionToMessage, streamingResponseToMessage } from '@douyinfe/semi-ui';
 import { IconFixedStroked, IconBookOpenStroked, IconFeishuLogo, IconFigma, IconGit } from '@douyinfe/semi-icons';
 import { roleConfig, uploadProps, modelOptions, radioButtonProps } from './constants';
-// todo: 升级版本，从组件中直接导出
-import { ContentItem, Message } from '@douyinfe/semi-foundation/lib/es/aiChatDialogue/foundation';
-import { MessageContent } from '@douyinfe/semi-foundation/lib/es/aiChatInput/interface';
+import { ContentItem, Message } from '@douyinfe/semi-ui/lib/es/aiChatDialogue';
+import { MessageContent } from '@douyinfe/semi-ui/lib/es/aiChatInput';
 import { Content, Reference } from '@douyinfe/semi-ui/lib/es/aiChatInput/interface';
 import './App.css';
 import { ChatCompletionInput } from '@douyinfe/semi-foundation/lib/es/aiChatDialogue/dataAdapter/interface';
@@ -63,7 +62,7 @@ const App = () => {
         setReferences(newReference);
     }, [references]);
 
-    const handleMessageSend = useCallback(async (input: ContentItem[], chatCompletion: ChatCompletionInput, model: string) => {
+    const handleMessageSend = useCallback(async (input: ContentItem[], chatCompletion: any[] | undefined, model: string) => {
         try {
             const resp = await fetch('/api/write', {
                 method: 'POST',
@@ -137,8 +136,7 @@ const App = () => {
 
     const onMessageSend = useCallback((props: MessageContent) => {
         const userMessage = chatInputToMessage(props);
-        //todo：升级版本后更改写法
-        const chatCompletion = [chatInputToChatCompletion(props)];
+        const chatCompletion = chatInputToChatCompletion(props);
         setGenerating(true);
         setMessages((messages) => [...messages, {
             id: `message-${Date.now()}`,
@@ -147,7 +145,7 @@ const App = () => {
         (async () => {
           // 将用户消息发送给 server 
           // Send user messages to the server
-          await handleMessageSend(userMessage.content, chatCompletion, userMessage.model,);
+          await handleMessageSend(userMessage.content, chatCompletion.messages, userMessage.model,);
         })();
         setReferences([]);
     }, []);
@@ -205,7 +203,6 @@ const App = () => {
                 className="input-outer-style"
                 placeholder={'输入内容或者上传内容'} 
                 defaultContent={'帮我写一个关于<input-slot placeholder="[主题]">独角兽</input-slot>的故事'}
-                skills={[]}
                 generating={generating}
                 references={references}
                 uploadProps={uploadProps}

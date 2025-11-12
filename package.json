@@ -16,7 +16,7 @@
     "dev:full": "concurrently -k -n SERVER,WEB -c green,blue \"npm:server\" \"npm:dev\""
   },
   "dependencies": {
-    "@douyinfe/semi-ui": "2.88.0-beta.0",
+    "@douyinfe/semi-ui": "2.88.0",
     "@openai/agents": "0.2.1",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
