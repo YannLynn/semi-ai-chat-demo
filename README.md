@@ -1,5 +1,7 @@
 ## Semi-AI-Chat-Demo
 
+<img src='https://lf3-static.bytednsdoc.com/obj/eden-cn/22606991eh7uhfups/img/multiple-agent.gif'/>
+
 ### 项目介绍 Project Introduction
 本项目使用 `@douyinfe/semi-ui` 2.88.0 以上版本的 AIChat 系列组件，配合 OpenAI 官方提供的 JavaScript/TypeScript SDK `@openai/agents` 搭建了一个简单的多 Agent 对话页面，完成根据主题完成故事编写的功能。其中大纲 Agent 会调用 get_background_points 完成大纲的编写，正文 Agent 则根据大纲 Agent 的结果完成故事的编写。
 
